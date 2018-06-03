@@ -137,10 +137,12 @@ main(int argc, char *argv[]) {
 	struct lua_State *L = luaL_newstate();
 	luaL_openlibs(L);	// link lua lib
 
+	// 加载load_config代码块 "t" 表示代码块为文本
 	int err =  luaL_loadbufferx(L, load_config, strlen(load_config), "=[skynet config]", "t");
 	assert(err == LUA_OK);
 	lua_pushstring(L, config_file);
 
+	// 调用lua函数，1个参数，1个结果
 	err = lua_pcall(L, 1, 1, 0);
 	if (err) {
 		fprintf(stderr,"%s\n",lua_tostring(L,-1));

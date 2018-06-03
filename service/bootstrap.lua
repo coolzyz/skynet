@@ -9,6 +9,7 @@ skynet.start(function()
 
 	local standalone = skynet.getenv "standalone"
 
+	-- 返回handle的16进制表示
 	local launcher = assert(skynet.launch("snlua","launcher"))
 	skynet.name(".launcher", launcher)
 
@@ -43,6 +44,6 @@ skynet.start(function()
 		skynet.name("DATACENTER", datacenter)
 	end
 	skynet.newservice "service_mgr"
-	pcall(skynet.newservice,skynet.getenv "start" or "main")
+	pcall(skynet.newservice, skynet.getenv "start" or "main")
 	skynet.exit()
 end)

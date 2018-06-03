@@ -20,7 +20,7 @@
 
 struct message_queue {
 	struct spinlock lock;
-	uint32_t handle;
+	uint32_t handle;//context uniq id
 	int cap;
 	int head;
 	int tail;

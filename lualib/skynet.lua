@@ -309,6 +309,7 @@ function suspend(co, result, command, param, param2)
 end
 
 function skynet.timeout(ti, func)
+	-- timeout 在栈底
 	local session = c.intcommand("TIMEOUT",ti)
 	assert(session)
 	local co = co_create(func)
@@ -445,6 +446,7 @@ local function yield_call(service, session)
 	return msg,sz
 end
 
+-- return skynet.call(".launcher", "lua" , "LAUNCH", "snlua", name, ...)
 function skynet.call(addr, typename, ...)
 	coroutine_yield("CALLTRACE", addr)
 	local p = proto[typename]
@@ -615,6 +617,7 @@ function skynet.dispatch_message(...)
 	assert(succ, tostring(err))
 end
 
+--name=cmaster
 function skynet.newservice(name, ...)
 	return skynet.call(".launcher", "lua" , "LAUNCH", "snlua", name, ...)
 end
@@ -726,6 +729,7 @@ function skynet.init_service(start)
 	end
 end
 
+-- lua call c
 function skynet.start(start_func)
 	c.callback(skynet.dispatch_message)
 	skynet.timeout(0, function()

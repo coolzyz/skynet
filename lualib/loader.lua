@@ -5,6 +5,13 @@ end
 
 SERVICE_NAME = args[1]
 
+for k, v in pairs(args) do
+	print "loader start" 
+	print  (k, v)
+	print "loader end" 
+end
+
+
 local main, pattern
 
 local err = {}
@@ -24,6 +31,7 @@ if not main then
 	error(table.concat(err, "\n"))
 end
 
+-- 全局变量lua_service lua_cpath lua_path置为nil
 LUA_SERVICE = nil
 package.path , LUA_PATH = LUA_PATH
 package.cpath , LUA_CPATH = LUA_CPATH
@@ -45,4 +53,5 @@ if LUA_PRELOAD then
 	LUA_PRELOAD = nil
 end
 
+-- 参数中的第2个以后的部分
 main(select(2, table.unpack(args)))

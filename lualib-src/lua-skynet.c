@@ -111,8 +111,10 @@ lcallback(lua_State *L) {
 	int forward = lua_toboolean(L, 2);
 	luaL_checktype(L,1,LUA_TFUNCTION);
 	lua_settop(L,1);
+	// t[_cb] = lua_tfction 也就是skynet.dispatch_message
 	lua_rawsetp(L, LUA_REGISTRYINDEX, _cb);
 
+	// 压栈t[1]
 	lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_MAINTHREAD);
 	lua_State *gL = lua_tothread(L,-1);
 
@@ -178,6 +180,7 @@ laddresscommand(lua_State *L) {
 static int
 lintcommand(lua_State *L) {
 	struct skynet_context * context = lua_touserdata(L, lua_upvalueindex(1));
+	// timeout
 	const char * cmd = luaL_checkstring(L,1);
 	const char * result;
 	const char * parm = NULL;
@@ -500,6 +503,7 @@ luaopen_skynet_core(lua_State *L) {
 
 	lua_createtable(L, 0, sizeof(l)/sizeof(l[0]) + sizeof(l2)/sizeof(l2[0]) -2);
 
+	// t["skynet_context"]压栈
 	lua_getfield(L, LUA_REGISTRYINDEX, "skynet_context");
 	struct skynet_context *ctx = lua_touserdata(L,-1);
 	if (ctx == NULL) {

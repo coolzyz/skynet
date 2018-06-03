@@ -8,6 +8,8 @@
 #include <assert.h>
 #include <string.h>
 
+#include <stdio.h>
+
 #define DEFAULT_SLOT_SIZE 4
 #define MAX_SLOT_SIZE 0x40000000
 
@@ -22,7 +24,7 @@ struct handle_storage {
 	uint32_t harbor;
 	uint32_t handle_index;
 	int slot_size;
-	struct skynet_context ** slot;
+	struct skynet_context* *slot;
 	
 	int name_cap;
 	int name_count;

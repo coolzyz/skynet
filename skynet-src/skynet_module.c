@@ -16,6 +16,7 @@ struct modules {
 	int count;
 	struct spinlock lock;
 	const char * path;
+	// 最大32个module
 	struct skynet_module m[MAX_MODULE_TYPE];
 };
 
@@ -24,6 +25,7 @@ static struct modules * M = NULL;
 static void *
 _try_open(struct modules *m, const char * name) {
 	const char *l;
+	//cpath ./cservice/?.so
 	const char * path = m->path;
 	size_t path_size = strlen(path);
 	size_t name_size = strlen(name);
@@ -99,6 +101,7 @@ open_sym(struct skynet_module *mod) {
 	return mod->init == NULL;
 }
 
+//  check update 
 struct skynet_module * 
 skynet_module_query(const char * name) {
 	struct skynet_module * result = _query(name);
@@ -109,6 +112,7 @@ skynet_module_query(const char * name) {
 
 	result = _query(name); // double check
 
+	// 最多32个module（.so)
 	if (result == NULL && M->count < MAX_MODULE_TYPE) {
 		int index = M->count;
 		void * dl = _try_open(M,name);
@@ -142,6 +146,7 @@ skynet_module_insert(struct skynet_module *mod) {
 	SPIN_UNLOCK(M)
 }
 
+// .so有xxx_create函数将调用，否则返回很大的指针地址, 为何不返回nullptr?
 void * 
 skynet_module_instance_create(struct skynet_module *m) {
 	if (m->create) {

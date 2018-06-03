@@ -354,6 +354,7 @@ socket_server_create() {
 	ss->sendctrl_fd = fd[1];
 	ss->checkctrl = 1;
 
+    // 最大65536个socket
 	for (i=0;i<MAX_SOCKET;i++) {
 		struct socket *s = &ss->slot[i];
 		s->type = SOCKET_TYPE_INVALID;

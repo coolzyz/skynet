@@ -231,6 +231,7 @@ start(int thread) {
 
 static void
 bootstrap(struct skynet_context * logger, const char * cmdline) {
+	//cmdline: snlua bootstrap
 	int sz = strlen(cmdline);
 	char name[sz+1];
 	char args[sz+1];
@@ -265,6 +266,7 @@ skynet_start(struct skynet_config * config) {
 	skynet_socket_init();
 	skynet_profile_enable(config->profile);
 
+	// 加载logger.so,创建context
 	struct skynet_context *ctx = skynet_context_new(config->logservice, config->logger);
 	if (ctx == NULL) {
 		fprintf(stderr, "Can't launch %s service\n", config->logservice);

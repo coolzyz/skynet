@@ -165,6 +165,7 @@ skynet_context_new(const char * name, const char *param) {
 		if (ret) {
 			ctx->init = true;
 		}
+		// snlua 启动时push了2次？
 		skynet_globalmq_push(queue);
 		if (ret) {
 			skynet_error(ret, "LAUNCH %s %s", name, param ? param : "");
@@ -429,6 +430,8 @@ cmd_query(struct skynet_context * context, const char * param) {
 	return NULL;
 }
 
+// .launcher :0xhandleid
+// 名字注册进全局handle
 static const char *
 cmd_name(struct skynet_context * context, const char * param) {
 	int size = strlen(param);

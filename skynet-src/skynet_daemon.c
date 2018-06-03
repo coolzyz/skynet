@@ -22,6 +22,7 @@ check_pid(const char *pidfile) {
 		return 0;
 	}
 
+    // 无效的pid
 	if (kill(pid, 0) && errno == ESRCH)
 		return 0;
 
@@ -40,10 +41,10 @@ write_pid(const char *pidfile) {
 	f = fdopen(fd, "r+");
 	if (f == NULL) {
 		fprintf(stderr, "Can't open pidfile [%s].\n", pidfile);
-		close(fd);
 		return 0;
 	}
 
+    // 尝试加exclusive
 	if (flock(fd, LOCK_EX|LOCK_NB) == -1) {
 		int n = fscanf(f, "%d", &pid);
 		fclose(f);
@@ -58,7 +59,7 @@ write_pid(const char *pidfile) {
 	pid = getpid();
 	if (!fprintf(f,"%d\n", pid)) {
 		fprintf(stderr, "Can't write pid.\n");
-		fclose(f);
+		close(fd);
 		return 0;
 	}
 	fflush(f);

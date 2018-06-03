@@ -38,6 +38,7 @@ codecache(lua_State *L) {
 		{ "mode", cleardummy },
 		{ NULL, NULL },
 	};
+	// 创建一张新的表，并把列表 l 中的函数注册进去
 	luaL_newlib(L,l);
 	lua_getglobal(L, "loadfile");
 	lua_setfield(L, -2, "loadfile");
@@ -72,17 +73,23 @@ optstring(struct skynet_context *ctx, const char *key, const char * str) {
 	return ret;
 }
 
+//args:"bootstrap" 
+//aggs:"launcher"
 static int
 init_cb(struct snlua *l, struct skynet_context *ctx, const char * args, size_t sz) {
 	lua_State *L = l->L;
 	l->ctx = ctx;
+	// 停止gc
 	lua_gc(L, LUA_GCSTOP, 0);
 	lua_pushboolean(L, 1);  /* signal for libraries to ignore env. vars. */
+	//t[LUA_NOENV] = bool(1)
 	lua_setfield(L, LUA_REGISTRYINDEX, "LUA_NOENV");
 	luaL_openlibs(L);
 	lua_pushlightuserdata(L, ctx);
+	//t["skynet_context"] = ctx;
 	lua_setfield(L, LUA_REGISTRYINDEX, "skynet_context");
 	luaL_requiref(L, "skynet.codecache", codecache , 0);
+	// 弹出1个
 	lua_pop(L,1);
 
 	const char *path = optstring(ctx, "lua_path","./lualib/?.lua;./lualib/?/init.lua");
@@ -126,6 +133,7 @@ init_cb(struct snlua *l, struct skynet_context *ctx, const char * args, size_t s
 	}
 	lua_pop(L, 1);
 
+	// 重启gc
 	lua_gc(L, LUA_GCRESTART, 0);
 
 	return 0;
@@ -148,9 +156,11 @@ int
 snlua_init(struct snlua *l, struct skynet_context *ctx, const char * args) {
 	int sz = strlen(args);
 	char * tmp = skynet_malloc(sz);
+	//args: "bootstrap"
 	memcpy(tmp, args, sz);
-	skynet_callback(ctx, l , launch_cb);
+	skynet_callback(ctx, l, launch_cb);
 	const char * self = skynet_command(ctx, "REG", NULL);
+	// 16进制字符串
 	uint32_t handle_id = strtoul(self+1, NULL, 16);
 	// it must be first message
 	skynet_send(ctx, 0, handle_id, PTYPE_TAG_DONTCOPY,0, tmp, sz);

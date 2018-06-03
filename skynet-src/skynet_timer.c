@@ -48,9 +48,9 @@ struct timer {
 	struct link_list t[4][TIME_LEVEL];
 	struct spinlock lock;
 	uint32_t time;
-	uint32_t starttime;
-	uint64_t current;
-	uint64_t current_point;
+	uint32_t starttime;//时间戳 in sec
+	uint64_t current;// point的补充时间戳 in 0.01sec
+	uint64_t current_point;//时间戳 in 0.01sec
 };
 
 static struct timer * TI = NULL;
